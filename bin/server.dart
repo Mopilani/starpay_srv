@@ -29,7 +29,7 @@ void main(List<String> args) async {
 
   // For running in containers, we respect the PORT environment variable.
   final port = int.parse(Platform.environment['PORT'] ?? '8081');
-  final server = await serve(handler, ip, port);
+  final server = await serve(handler, '35.172.117.38', port);
   print('Server listening on port ${server.port}');
   print('Server listening on ip ${server.address.address}');
 }
