@@ -28,7 +28,7 @@ void main(List<String> args) async {
       .addHandler(_router.call);
 
   // For running in containers, we respect the PORT environment variable.
-  final port = int.parse(Platform.environment['PORT'] ?? '8081');
+  final port = int.parse(Platform.environment['PORT'] ?? '46938');
   final server = await serve(handler, ip, port);
   print('Server listening on port ${server.port}');
   print('Server listening on ip ${server.address.address}');
