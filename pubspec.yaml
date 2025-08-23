@@ -12,6 +12,7 @@ dependencies:
   smtpd: ^0.2.0
   enough_mail: ^2.1.7
   oauth2: ^2.0.3
+  mongo_dart: ^0.10.5
 
 dev_dependencies:
   http: ^1.1.0

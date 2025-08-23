@@ -133,15 +133,15 @@ Future<void> popExample() async {
     }
     print('----------______-++++++++++========++++++===');
     // message = await client.retrieve();
-    for (
-      int i = status.numberOfMessages;
-      i > (status.numberOfMessages - 15);
-      i--
-    ) {
-      print('----------++++++++++========++++++=== Printing Message');
-      message = await client.retrieve(i);
-      printMessage(message);
-    }
+    // for (
+    //   int i = status.numberOfMessages;
+    //   i > (status.numberOfMessages - 15);
+    //   i--
+    // ) {
+    //   print('----------++++++++++========++++++=== Printing Message');
+    //   message = await client.retrieve(i);
+    //   printMessage(message);
+    // }
     print('trying to retrieve newer message succeeded');
     await client.quit();
   } catch (e) {
