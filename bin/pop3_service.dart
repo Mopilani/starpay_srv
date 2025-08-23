@@ -121,7 +121,7 @@ Future<void> popExample() async {
     print(
       'status: messages count=${status.numberOfMessages}, messages size=${status.totalSizeInBytes}',
     );
-    final messageList = await client.list(status.numberOfMessages);
+    final messageList = await client.list();
     print(
       'last message: id=${messageList.first.id} size=${messageList.first.sizeInBytes}',
     );
