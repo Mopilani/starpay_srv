@@ -7,10 +7,17 @@ import 'package:shelf_router/shelf_router.dart';
 // Configure routes.
 final _router = Router()
   ..all('/', _rootHandler)
+  ..all('/oauth/', _oauthHandler)
   ..get('/echo/<message>', _echoHandler);
 
 Response _rootHandler(Request req) {
   return Response.ok('Hello, World!\n');
+}
+
+Response _oauthHandler(Request req) {
+  print('${req.headers}');
+  // print('${req.}');
+  return Response.ok('Oauth');
 }
 
 Response _echoHandler(Request request) {
