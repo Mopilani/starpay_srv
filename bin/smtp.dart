@@ -13,7 +13,7 @@ void main() async {
     SmtpConfig(
       address: InternetAddress.loopbackIPv4,
       port: 2525,
-      hostname: 'localhost',
+      hostname: '0.0.0.0',
     ),
     mailHandler: DummyMailHandler(),
   );
