@@ -13,7 +13,7 @@ void main() async {
     SmtpConfig(
       address: InternetAddress.anyIPv4,
       port: 8082,
-      hostname: '0.0.0.0',
+      hostname: 'noreplay',
     ),
     mailHandler: DummyMailHandler(),
   );
@@ -23,15 +23,20 @@ void main() async {
 class DummyMailHandler extends MailHandler {
   @override
   Future<SmtpStatusMessage> handleMail(
-      SmtpClient client, MailObject mailObject) async {
+    SmtpClient client,
+    MailObject mailObject,
+  ) async {
     _logger.info(
-        'Got Mail Message (client: ${client.remoteHostName} to send: $mailObject\n\n\n');
+      'Got Mail Message (client: ${client.remoteHostName} to send: $mailObject\n\n\n',
+    );
     return SmtpStatusMessage.successCompleted;
   }
 
   @override
   Future<SmtpStatusMessage> verifyAddress(
-      SmtpClient client, String address) async {
+    SmtpClient client,
+    String address,
+  ) async {
     _logger.fine('Need to verify address: {$address}');
     return SmtpStatusMessage.successCompleted;
   }
