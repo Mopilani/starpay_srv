@@ -11,8 +11,8 @@ void main() async {
   PrintAppender.setupLogging();
   final smtpd = SmtpServer(
     SmtpConfig(
-      address: InternetAddress.loopbackIPv4,
-      port: 2525,
+      address: InternetAddress.anyIPv4,
+      port: 8082,
       hostname: '0.0.0.0',
     ),
     mailHandler: DummyMailHandler(),
