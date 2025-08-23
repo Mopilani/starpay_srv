@@ -123,6 +123,9 @@ Future<void> popExample() async {
     );
     final messageList = await client.list();
     print(
+      'Messages Found: ${messageList.length}',
+    );
+    print(
       'last message: id=${messageList.first.id} size=${messageList.first.sizeInBytes}',
     );
     var message = await client.retrieve(status.numberOfMessages);
