@@ -34,12 +34,21 @@ class P3Db {
         .digest();
     var result = await coll.findOne(where.eq('hash', messageHash));
     if (result == null) {
-      return await coll.insert({
-        'hash': messageHash,
-        'eid': id,
-        'data': mime.body!.bodyRaw,
-        // 'data': utf8.decode(data.decodeContentBinary()!.toList()),
-      });
+      try {
+        return await coll.insert({
+          'hash': messageHash,
+          'eid': id,
+          'data': mime.body!.bodyRaw,
+          // 'data': utf8.decode(data.decodeContentBinary()!.toList()),
+        });
+      } catch (e) {
+        return await coll.insert({
+          'hash': messageHash,
+          'eid': id,
+          'data': mime.decodeContentBinary()!.toList(),
+          // 'data': utf8.decode(),
+        });
+      }
     } else {
       print('Message Was Inserted');
     }
