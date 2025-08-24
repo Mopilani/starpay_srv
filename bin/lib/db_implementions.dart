@@ -27,10 +27,12 @@ class P3Db {
     return db;
   }
 
-  Future<dynamic> addMail(int id, MimeMessage mime) async {
+  // Future<dynamic> addMail(int id, MimeMessage mime) async {
+  Future<dynamic> addMail(int id, List<String> messageLines) async {
     var coll = db.collection('emls');
     var messageHash = SHA256()
-        .update(mime.decodeContentBinary()!.toList())
+        // .update(mime.decodeContentBinary()!.toList())
+        .update(messageLines.join('\n').codeUnits)
         .digest();
     var result = await coll.findOne(where.eq('hash', messageHash));
     if (result == null) {
@@ -38,14 +40,16 @@ class P3Db {
         return await coll.insert({
           'hash': messageHash,
           'eid': id,
-          'data': mime.body!.bodyRaw,
+          'data': messageLines,
+          // 'data': mime.body!.bodyRaw,
           // 'data': utf8.decode(data.decodeContentBinary()!.toList()),
         });
       } catch (e) {
         return await coll.insert({
           'hash': messageHash,
           'eid': id,
-          'data': mime.decodeContentBinary()!.toList(),
+          'data': messageLines,
+          // 'data': mime.decodeContentBinary()!.toList(),
           // 'data': utf8.decode(),
         });
       }
