@@ -18,7 +18,12 @@ Response _rootHandler(Request req) {
 }
 
 Future<Response> last10Messages(Request req) async {
-  var response = await http.get(Uri.parse('http://localhost:8083/update'));
+  try {
+    var response = await http.get(Uri.parse('http://localhost:8083/update'));
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
   // if (response.statusCode == 200) {
   // } else {}
   var r = P3Db().getLast10Message();
