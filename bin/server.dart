@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:shelf/shelf.dart';
@@ -26,8 +27,8 @@ Future<Response> last10Messages(Request req) async {
   }
   // if (response.statusCode == 200) {
   // } else {}
-  var r = P3Db().getLast10Message();
-  return Response.ok(r);
+  var r = await P3Db().getLast10Message();
+  return Response.ok(json.encode(r));
 }
 
 Response _echoHandler(Request request) {
