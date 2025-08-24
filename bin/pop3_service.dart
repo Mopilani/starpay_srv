@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:enough_mail/enough_mail.dart';
+import 'package:path_provider/path_provider.dart';
+import 'lib/db_implementions.dart';
 
 String email = '';
 String appPass = '';
-String imapServerHost = 'imap.domain.com';
+String imapServerHost = 'imap.gmail.com';
 int imapServerPort = 993;
 bool isImapServerSecure = true;
 String popServerHost = 'pop.gmail.com';
@@ -13,13 +16,50 @@ String smtpServerHost = 'smtp.gmail.com';
 int smtpServerPort = 587;
 bool isSmtpServerSecure = true;
 
+/** About the Service
+ * This service will get the messages from the account and load 
+ * it into the db 
+ */
+/// This service will get the messages from the account and
+/// load it into the db
 void main(List<String> args) async {
   email = args[0];
   appPass = args[1];
+  final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+
+  print('Application documents DIR: ${appDocumentsDir.path}');
+  var configFile = File('${appDocumentsDir.path}/config.json');
+  if (await configFile.exists()) {
+    var data = await configFile.readAsString();
+    try {
+      var config = json.decode(data);
+      email = config['email'];
+      appPass = config['appPass'];
+      print("App Config Loaded.");
+    } catch (e, s) {
+      print(e);
+      print(s);
+      print(
+        "Can't find a valid data in the config file, trying parsing args...",
+      );
+      try {
+        var data = json.encode({'email': email, 'appPass': appPass});
+        await configFile.writeAsString(data);
+        print("App Config Written and Loaded.");
+      } catch (e, s) {
+        print(e);
+        print(s);
+      }
+    }
+  } else {
+    configFile.create();
+  }
+
+  await initDb();
   // await discoverExample();
   // await imapExample();
   // await smtpExample();
-  await popExample();
+  await popServiceLoop();
   exit(0);
 }
 
@@ -108,7 +148,7 @@ Future<void> smtpExample() async {
 }
 
 /// Low level POP3 API example
-Future<void> popExample() async {
+Future<void> popServiceLoop() async {
   final client = PopClient(isLogEnabled: false);
   try {
     await client.connectToServer(
@@ -122,18 +162,19 @@ Future<void> popExample() async {
       'status: messages count=${status.numberOfMessages}, messages size=${status.totalSizeInBytes}',
     );
     final messageList = await client.list();
-    print(
-      'Messages Found: ${messageList.length}',
-    );
+    for (var msgRef in messageList) {
+      print(msgRef.id);
+      // addMail(msgRef.id, msgRef.);
+    }
+
+    print('Messages Found: ${messageList.length}');
     print(
       'last message: id=${messageList.first.id} size=${messageList.first.sizeInBytes}',
     );
     var message = await client.retrieve(status.numberOfMessages);
     printMessage(message);
     print('----------++++++++++========++++++===');
-    for (var msg in messageList) {
-      print(msg);
-    }
+
     print('----------______-++++++++++========++++++===');
     // message = await client.retrieve();
     // for (
