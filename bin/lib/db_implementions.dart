@@ -19,7 +19,7 @@ class P3Db {
   late Db db;
 
   Future<Db> initDb() async {
-    db = Db("mongodb://localhost:27017/mongo_dart-blog");
+    db = Db("mongodb://13.220.217.147:8082/stpy_test");
     return await db.open();
   }
 
