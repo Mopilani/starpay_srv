@@ -20,7 +20,8 @@ class P3Db {
 
   Future<Db> initDb() async {
     db = Db("mongodb://13.220.217.147:8082/stpy_test");
-    return await db.open();
+    await db.open();
+    return db;
   }
 
   Future<dynamic> addMail(int id, dynamic data) async {
