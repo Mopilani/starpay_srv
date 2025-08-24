@@ -19,6 +19,15 @@ String smtpServerHost = 'smtp.gmail.com';
 int smtpServerPort = 587;
 bool isSmtpServerSecure = true;
 
+final router = Router()
+  ..get('/update', () {
+    disclosureRequired = true;
+    while (disclosureRequired) {
+      Future.delayed(Duration(seconds: 2));
+    }
+    return Response.ok('');
+  });
+
 /** About the Service
  * Periodic:
  * This service will get the messages from the account and load 
@@ -61,15 +70,6 @@ void main(List<String> args) async {
   } else {
     configFile.create();
   }
-
-  final router = Router()
-    ..get('/update', () {
-      disclosureRequired = true;
-      while (disclosureRequired) {
-        Future.delayed(Duration(seconds: 2));
-      }
-      return Response.ok('');
-    });
 
   final ip = InternetAddress.loopbackIPv4;
 
