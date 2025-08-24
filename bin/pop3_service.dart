@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -32,10 +32,10 @@ bool isSmtpServerSecure = true;
 void main(List<String> args) async {
   email = args[0];
   appPass = args[1];
-  final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+  // final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
 
-  print('Application documents DIR: ${appDocumentsDir.path}');
-  var configFile = File('${appDocumentsDir.path}/config.json');
+  // print('Application documents DIR: ${appDocumentsDir.path}');
+  var configFile = File('config.json');
   if (await configFile.exists()) {
     var data = await configFile.readAsString();
     try {
@@ -64,7 +64,7 @@ void main(List<String> args) async {
 
   final router = Router()
     ..get('/update', () {
-      
+
       return Response.ok('');
     });
 

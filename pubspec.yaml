@@ -14,7 +14,7 @@ dependencies:
   oauth2: ^2.0.3
   mongo_dart: ^0.10.5
   hash: ^1.0.4
-  path_provider: ^2.1.5
+  # path_provider: ^2.1.5
 
 dev_dependencies:
   http: ^1.1.0
