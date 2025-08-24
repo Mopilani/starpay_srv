@@ -66,12 +66,9 @@ void main(List<String> args) async {
     ..get('/update', () {
       disclosureRequired = true;
       while (disclosureRequired) {
-        if (disclosureRequired) {
-          Future.delayed(Duration(seconds: 2));
-        } else {
-          return Response.ok('');
-        }
+        Future.delayed(Duration(seconds: 2));
       }
+      return Response.ok('');
     });
 
   final ip = InternetAddress.loopbackIPv4;
