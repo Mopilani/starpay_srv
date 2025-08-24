@@ -41,7 +41,7 @@ Future<void> popServiceLoop({
         print(
           '-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-',
         );
-        printMessage(message);
+        // printMessage(message);
         // var _message = P3Client.decodeMessage(message);
         await P3Db().addMail(msgRef.id, message);
       }
