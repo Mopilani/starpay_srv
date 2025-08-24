@@ -6,6 +6,8 @@ import 'print_message_function.dart';
 import 'db_implementions.dart';
 import 'pop3_client.dart';
 
+bool disclosureRequired = false;
+
 /// Low level POP3 API example
 Future<void> popServiceLoop({
   required String popServerHost,
@@ -44,9 +46,12 @@ Future<void> popServiceLoop({
         await P3Db().addMail(msgRef.id, message);
       }
 
-      await Future.delayed(Duration(seconds: 60), () {
+      disclosureRequired = false;
+
+      while (!disclosureRequired) {
+        await Future.delayed(Duration(seconds: 1));
         print('In Delay +');
-      });
+      }
     }
   } catch (e, s) {
     print(e);

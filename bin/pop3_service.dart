@@ -64,8 +64,14 @@ void main(List<String> args) async {
 
   final router = Router()
     ..get('/update', () {
-
-      return Response.ok('');
+      disclosureRequired = true;
+      while (disclosureRequired) {
+        if (disclosureRequired) {
+          Future.delayed(Duration(seconds: 2));
+        } else {
+          return Response.ok('');
+        }
+      }
     });
 
   final ip = InternetAddress.loopbackIPv4;
