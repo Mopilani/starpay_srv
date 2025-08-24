@@ -1,3 +1,4 @@
+import 'package:enough_mail/enough_mail.dart';
 import 'package:hash/hash.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -24,9 +25,11 @@ class P3Db {
     return db;
   }
 
-  Future<dynamic> addMail(int id, dynamic data) async {
+  Future<dynamic> addMail(int id, MimeMessage data) async {
     var coll = db.collection('emls');
-    var messageHash = SHA256().update(data).digest();
+    var messageHash = SHA256()
+        .update(data.decodeContentBinary()!.toList())
+        .digest();
     var result = await coll.findOne(where.eq('hash', messageHash));
     if (result == null) {
       return await coll.insert({'hash': messageHash, 'eid': id, 'data': data});
