@@ -39,8 +39,6 @@ final router = Router()
 /// This service will get the messages from the account and
 /// load it into the db
 void main(List<String> args) async {
-  email = args[0];
-  appPass = args[1];
   // final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
 
   // print('Application documents DIR: ${appDocumentsDir.path}');
@@ -59,6 +57,8 @@ void main(List<String> args) async {
         "Can't find a valid data in the config file, trying parsing args...",
       );
       try {
+        email = args[0];
+        appPass = args[1];
         var data = json.encode({'email': email, 'appPass': appPass});
         await configFile.writeAsString(data);
         print("App Config Written and Loaded.");
