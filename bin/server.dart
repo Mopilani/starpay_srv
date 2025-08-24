@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:http/http.dart' as http;
 
 // Configure routes.
 final _router = Router()
@@ -15,6 +16,7 @@ Response _rootHandler(Request req) {
 }
 
 Response last10Messages(Request req) {
+  http.get(Uri.parse('http://localhost:8083/update'));
   // getLast10Message();
   return Response.ok('');
 }
