@@ -27,9 +27,11 @@ Future<void> popServiceLoop({
       'status: messages count=${status?.numberOfMessages}, messages size=${status?.totalSizeInBytes}',
     );
 
-    final messageList = await P3Client.list();
-
     for (int i = 0; i < 10; i++) {
+      print('Trying to get messages');
+      final messageList = await P3Client.list();
+      print('Fetched Message Count: ${messageList.length}');
+
       for (var msgRef in messageList) {
         print('Message Id: ${msgRef.id}');
         var message = await P3Client.retrieve(msgRef.id);
@@ -41,6 +43,7 @@ Future<void> popServiceLoop({
         // var _message = P3Client.decodeMessage(message);
         // await P3Db().addMail(msgRef.id, message);
       }
+
       await Future.delayed(Duration(seconds: 60), () {
         print('In Delay +');
       });
