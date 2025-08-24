@@ -66,6 +66,6 @@ class P3Db {
 
   Future<List<Map<String, dynamic>>> getLast10Message() async {
     var coll = db.collection('emls');
-    return await coll.find(where.within('natural', -1).limit(10)).toList();
+    return await coll.find(where.raw({'\$natural': -1}).limit(-10)).toList();
   }
 }
