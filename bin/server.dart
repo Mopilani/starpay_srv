@@ -5,6 +5,8 @@ import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:http/http.dart' as http;
 
+import 'lib/db_implementions.dart';
+
 // Configure routes.
 final _router = Router()
   ..all('/', _rootHandler)
@@ -17,9 +19,10 @@ Response _rootHandler(Request req) {
 
 Future<Response> last10Messages(Request req) async {
   var response = await http.get(Uri.parse('http://localhost:8083/update'));
-  // print();
-  // getLast10Message();
-  return Response.ok('${response.statusCode}');
+  // if (response.statusCode == 200) {
+  // } else {}
+  var r = P3Db().getLast10Message();
+  return Response.ok(r);
 }
 
 Response _echoHandler(Request request) {
@@ -31,6 +34,8 @@ void main(List<String> args) async {
   // Use any available host or container IP (usually `0.0.0.0`).
   final ip = InternetAddress.anyIPv4;
 
+  print('Initializing DB');
+  await P3Db().initDb();
   // Configure a pipeline that logs requests.
   final handler = Pipeline()
       .addMiddleware(logRequests())
