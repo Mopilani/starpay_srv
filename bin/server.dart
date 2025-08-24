@@ -15,10 +15,11 @@ Response _rootHandler(Request req) {
   return Response.ok('Hello, World!\n');
 }
 
-Response last10Messages(Request req) {
-  http.get(Uri.parse('http://localhost:8083/update'));
+Future<Response> last10Messages(Request req) async {
+  var response = await http.get(Uri.parse('http://localhost:8083/update'));
+  // print();
   // getLast10Message();
-  return Response.ok('');
+  return Response.ok('${response.statusCode}');
 }
 
 Response _echoHandler(Request request) {
