@@ -14,7 +14,7 @@ class P3Client {
     required String email,
     required String appPass,
   }) async {
-    final client = PopClient(isLogEnabled: false);
+    client = PopClient(isLogEnabled: false);
     try {
       await client.connectToServer(
         popServerHost,
