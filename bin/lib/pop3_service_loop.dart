@@ -34,7 +34,7 @@ Future<void> popServiceLoop({
       final messageList = await P3Client.list();
       print('Fetched Message Count: ${messageList.length}');
 
-      for (var msgRef in messageList) {
+      for (var msgRef in messageList.reversed) {
         print('Message Id: ${msgRef.id}');
         var message = await P3Client.retrieve(msgRef.id);
         // print(message);
