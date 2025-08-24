@@ -10,7 +10,7 @@ import 'lib/db_implementions.dart';
 // Configure routes.
 final _router = Router()
   ..all('/', _rootHandler)
-  ..get('/last_ten/', last10Messages)
+  ..get('/last_ten', last10Messages)
   ..get('/echo/<message>', _echoHandler);
 
 Response _rootHandler(Request req) {
