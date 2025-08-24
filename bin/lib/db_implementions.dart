@@ -26,11 +26,13 @@ class P3Db {
 
   Future<dynamic> addMail(int id, dynamic data) async {
     var coll = db.collection('emls');
-    return await coll.insert({
-      'hash': SHA256().update(data).digest(),
-      'eid': id,
-      'data': data,
-    });
+    var messageHash = SHA256().update(data).digest();
+    var result = await coll.findOne(where.eq('hash', messageHash));
+    if (result == null) {
+      return await coll.insert({'hash': messageHash, 'eid': id, 'data': data});
+    } else {
+      print('Message Was Inserted');
+    }
   }
 
   Future<dynamic> getMail(String id) async {
