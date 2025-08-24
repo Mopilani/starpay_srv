@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:enough_mail/enough_mail.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
+import 'package:shelf_router/shelf_router.dart';
 import 'lib/db_implementions.dart';
+import 'lib/pop3_service_loop.dart';
 
 String email = '';
 String appPass = '';
@@ -17,8 +20,12 @@ int smtpServerPort = 587;
 bool isSmtpServerSecure = true;
 
 /** About the Service
+ * Periodic:
  * This service will get the messages from the account and load 
- * it into the db 
+ * it into the db, periodicly
+ * 
+ * Remote:
+ * Also it can be called remotly to get last messages when needed
  */
 /// This service will get the messages from the account and
 /// load it into the db
@@ -55,161 +62,30 @@ void main(List<String> args) async {
     configFile.create();
   }
 
-  await initDb();
-  // await discoverExample();
-  // await imapExample();
-  // await smtpExample();
-  await popServiceLoop();
-  exit(0);
-}
+  final router = Router()
+    ..get('/update', () {
+      
+      return Response.ok('');
+    });
 
-Future<void> discoverExample() async {
-  // var email = '';
-  var config = await Discover.discover(
-    email,
-    isLogEnabled: false,
-    forceSslConnection: true,
+  final ip = InternetAddress.loopbackIPv4;
+
+  // Configure a pipeline that logs requests.
+  final handler = Pipeline()
+      .addMiddleware(logRequests())
+      .addHandler(router.call);
+
+  // For running in containers, we respect the PORT environment variable.
+  final port = int.parse(Platform.environment['PORT'] ?? '8083');
+  await serve(handler, ip, port);
+
+  await P3Db().initDb();
+  await popServiceLoop(
+    popServerHost: popServerHost,
+    popServerPort: popServerPort,
+    isPopServerSecure: isPopServerSecure,
+    email: email,
+    appPass: appPass,
   );
-
-  if (config == null) {
-    print('Unable to discover settings for $email');
-  } else {
-    print('Settings for $email:');
-    for (var provider in config.emailProviders!) {
-      print('provider: ${provider.displayName}');
-      print('provider-domains: ${provider.domains}');
-      print('documentation-url: ${provider.documentationUrl}');
-      print('Incoming:');
-      print(provider.preferredIncomingServer);
-      print('Outgoing:');
-      print(provider.preferredOutgoingServer);
-    }
-  }
-}
-
-/// Low level IMAP API usage example
-Future<void> imapExample() async {
-  final client = ImapClient(isLogEnabled: false);
-  try {
-    await client.connectToServer(
-      imapServerHost,
-      imapServerPort,
-      isSecure: isImapServerSecure,
-    );
-    await client.login(email, appPass);
-    final mailboxes = await client.listMailboxes();
-    print('mailboxes: $mailboxes');
-    await client.selectInbox();
-    // fetch 10 most recent messages:
-    final fetchResult = await client.fetchRecentMessages(
-      messageCount: 10,
-      criteria: 'BODY.PEEK[]',
-    );
-    for (final message in fetchResult.messages) {
-      printMessage(message);
-    }
-    await client.logout();
-  } on ImapException catch (e) {
-    print('IMAP failed with $e');
-  }
-}
-
-/// Low level SMTP API example
-Future<void> smtpExample() async {
-  final client = SmtpClient('enough.de', isLogEnabled: true);
-  try {
-    await client.connectToServer(
-      smtpServerHost,
-      smtpServerPort,
-      isSecure: isSmtpServerSecure,
-    );
-    await client.ehlo();
-    if (client.serverInfo.supportsAuth(AuthMechanism.plain)) {
-      await client.authenticate('user.name', 'password', AuthMechanism.plain);
-    } else if (client.serverInfo.supportsAuth(AuthMechanism.login)) {
-      await client.authenticate('user.name', 'password', AuthMechanism.login);
-    } else {
-      return;
-    }
-    final builder =
-        MessageBuilder.prepareMultipartAlternativeMessage(
-            plainText: 'hello world.',
-            htmlText: '<p>hello <b>world</b></p>',
-          )
-          ..from = [MailAddress('My name', 'sender@domain.com')]
-          ..to = [MailAddress('Your name', 'recipient@domain.com')]
-          ..subject = 'My first message';
-    final mimeMessage = builder.buildMimeMessage();
-    final sendResponse = await client.sendMessage(mimeMessage);
-    print('message sent: ${sendResponse.isOkStatus}');
-  } on SmtpException catch (e) {
-    print('SMTP failed with $e');
-  }
-}
-
-/// Low level POP3 API example
-Future<void> popServiceLoop() async {
-  final client = PopClient(isLogEnabled: false);
-  try {
-    await client.connectToServer(
-      popServerHost,
-      popServerPort,
-      isSecure: isPopServerSecure,
-    );
-    await client.login(email, appPass);
-    final status = await client.status();
-    print(
-      'status: messages count=${status.numberOfMessages}, messages size=${status.totalSizeInBytes}',
-    );
-    final messageList = await client.list();
-    for (var msgRef in messageList) {
-      print(msgRef.id);
-      // addMail(msgRef.id, msgRef.);
-    }
-
-    print('Messages Found: ${messageList.length}');
-    print(
-      'last message: id=${messageList.first.id} size=${messageList.first.sizeInBytes}',
-    );
-    var message = await client.retrieve(status.numberOfMessages);
-    printMessage(message);
-    print('----------++++++++++========++++++===');
-
-    print('----------______-++++++++++========++++++===');
-    // message = await client.retrieve();
-    // for (
-    //   int i = status.numberOfMessages;
-    //   i > (status.numberOfMessages - 15);
-    //   i--
-    // ) {
-    //   print('----------++++++++++========++++++=== Printing Message');
-    //   message = await client.retrieve(i);
-    //   printMessage(message);
-    // }
-    print('trying to retrieve newer message succeeded');
-    await client.quit();
-  } catch (e) {
-    print(e);
-    // print('POP failed with ${e.message}');
-    // print(e.stackTrace);
-  }
-}
-
-void printMessage(MimeMessage message) {
-  print('from: ${message.from} with subject "${message.decodeSubject()}"');
-  if (!message.isTextPlainMessage()) {
-    print(' content-type: ${message.mediaType}');
-  } else {
-    final plainText = message.decodeTextPlainPart();
-    if (plainText != null) {
-      final lines = plainText.split('\r\n');
-      for (final line in lines) {
-        if (line.startsWith('>')) {
-          // break when quoted text starts
-          break;
-        }
-        print(line);
-      }
-    }
-  }
+  exit(0);
 }
