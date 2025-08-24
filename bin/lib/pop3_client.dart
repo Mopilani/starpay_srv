@@ -37,7 +37,7 @@ class P3Client {
   }
 
   static Future retrieve(int messageId) async {
-    return await client.retrieve(messageId);
+    return decodeMessage(await client.retrieve(messageId));
   }
 
   static Future<void> close() async {
