@@ -35,13 +35,13 @@ Future<void> popServiceLoop({
       for (var msgRef in messageList) {
         print('Message Id: ${msgRef.id}');
         var message = await P3Client.retrieve(msgRef.id);
-        print(message);
+        // print(message);
         print(
           '-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-',
         );
         printMessage(message);
         // var _message = P3Client.decodeMessage(message);
-        // await P3Db().addMail(msgRef.id, message);
+        await P3Db().addMail(msgRef.id, message);
       }
 
       await Future.delayed(Duration(seconds: 60), () {
