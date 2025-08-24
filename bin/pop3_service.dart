@@ -20,10 +20,10 @@ int smtpServerPort = 587;
 bool isSmtpServerSecure = true;
 
 final router = Router()
-  ..get('/update', (Request req) {
+  ..get('/update', (Request req) async {
     disclosureRequired = true;
     while (disclosureRequired) {
-      Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 2));
     }
     return Response.ok('');
   });
