@@ -48,9 +48,16 @@ Future<void> popServiceLoop({
 
       disclosureRequired = false;
 
+      int count = 0;
+      int maxSeconds = 120;
       while (!disclosureRequired) {
+        if (count < maxSeconds) {
+          count++;
+        } else {
+          disclosureRequired = true;
+        }
+        print('In Delay $count');
         await Future.delayed(Duration(seconds: 1));
-        print('In Delay +');
       }
     }
   } catch (e, s) {
