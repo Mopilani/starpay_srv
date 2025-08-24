@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:enough_mail/enough_mail.dart';
 import 'package:hash/hash.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -32,7 +34,11 @@ class P3Db {
         .digest();
     var result = await coll.findOne(where.eq('hash', messageHash));
     if (result == null) {
-      return await coll.insert({'hash': messageHash, 'eid': id, 'data': data});
+      return await coll.insert({
+        'hash': messageHash,
+        'eid': id,
+        'data': utf8.decode(data.decodeContentBinary()!.toList()),
+      });
     } else {
       print('Message Was Inserted');
     }
