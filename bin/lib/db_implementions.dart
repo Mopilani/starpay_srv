@@ -1,8 +1,7 @@
-import 'dart:convert';
-
-import 'package:enough_mail/enough_mail.dart';
 import 'package:hash/hash.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import 'modules/account_data.dart';
+import 'modules/star_account_data.dart';
 
 P3Db? instance;
 
@@ -18,6 +17,9 @@ class P3Db {
   }
 
   P3Db.newIns();
+  static const String accountsCollName = 'accs';
+  static const String starAccountsCollName = 'strAccs';
+  static const String emailsCollName = 'emls';
 
   late Db db;
 
@@ -58,14 +60,33 @@ class P3Db {
     }
   }
 
+  Future<dynamic> addAccount(String id, AccountData accountData) async {
+    var coll = db.collection(P3Db.accountsCollName);
+    return await coll.insert(accountData.asMap());
+  }
+
+  Future<dynamic> addStarAccount(STRAccountData strAccountData) async {
+    var coll = db.collection(P3Db.starAccountsCollName);
+    return await coll.insert(strAccountData.asMap());
+  }
+
+  Future<dynamic> getAccount(String id) async {
+    var coll = db.collection(P3Db.accountsCollName);
+    return await coll.findOne(where.eq('id', id));
+  }
+
   Future<dynamic> getMail(String id) async {
-    var coll = db.collection('emls');
-    // Fluent way
-    return await coll.findOne(where.eq('id', id).gt('rating', 10));
+    var coll = db.collection(P3Db.emailsCollName);
+    return await coll.findOne(where.eq('id', id));
   }
 
   Future<List<Map<String, dynamic>>> getLast10Message() async {
-    var coll = db.collection('emls');
+    var coll = db.collection(P3Db.emailsCollName);
     return await coll.find(where.raw({'\$natural': -1}).limit(10)).toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getAllMessages() async {
+    var coll = db.collection(P3Db.emailsCollName);
+    return await coll.find(where.raw({'\$natural': -1})).toList();
   }
 }
