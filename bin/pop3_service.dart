@@ -60,6 +60,7 @@ void main(List<String> args) async {
         email = args[0];
         appPass = args[1];
         var data = json.encode({'email': email, 'appPass': appPass});
+        // configFile.create();
         await configFile.writeAsString(data);
         print("App Config Written and Loaded.");
       } catch (e, s) {
@@ -68,7 +69,8 @@ void main(List<String> args) async {
       }
     }
   } else {
-    configFile.create();
+    print("Can't start service without configurations. Exiting");
+    exit(102);
   }
 
   final ip = InternetAddress.loopbackIPv4;
