@@ -42,7 +42,7 @@ void main(List<String> args) async {
   // final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
 
   // print('Application documents DIR: ${appDocumentsDir.path}');
-  var configFile = File('config.json');
+  var configFile = File('/home/ubuntu/starpay_srv/config.json');
   if (await configFile.exists()) {
     var data = await configFile.readAsString();
     try {
