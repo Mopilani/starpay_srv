@@ -20,6 +20,7 @@ class P3Db {
   static const String accountsCollName = 'accs';
   static const String starAccountsCollName = 'strAccs';
   static const String emailsCollName = 'emls';
+  static const String questsCollName = 'quests';
 
   late Db db;
 
@@ -80,9 +81,9 @@ class P3Db {
     return await coll.findOne(where.eq('id', id));
   }
 
-  Future<List<Map<String, dynamic>>> getLast10Message() async {
+  Future<List<Map<String, dynamic>>> getLastMessages(int limit) async {
     var coll = db.collection(P3Db.emailsCollName);
-    return await coll.find(where.raw({'\$natural': -1}).limit(10)).toList();
+    return await coll.find(where.raw({'\$natural': -1}).limit(limit)).toList();
   }
 
   Future<List<Map<String, dynamic>>> getAllMessages() async {

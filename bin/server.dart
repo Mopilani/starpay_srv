@@ -14,23 +14,26 @@ import 'lib/modules/star_account_data.dart';
 final _router = Router()
   ..all('/', _rootHandler)
   ..all('/account/<accountId>', getAccountData)
-  ..get('/last_ten', last10Messages)
+  ..get('/last_messages/<limit>', lastMessages)
   ..get('/echo/<message>', _echoHandler);
 
 Response _rootHandler(Request req) {
   return Response.ok('Hello, World!\n');
 }
 
-Future<Response> last10Messages(Request req) async {
+Future<Response> lastMessages(Request req) async {
+  final limit = req.params['limit'];
+  if (limit == null) return Response.badRequest();
+
   try {
     var response = await http.get(Uri.parse('http://localhost:8083/update'));
+    print("Messages Updated: ${response.statusCode}");
   } catch (e, s) {
     print(e);
     print(s);
   }
-  // if (response.statusCode == 200) {
-  // } else {}
-  var r = await P3Db().getLast10Message();
+
+  var r = await P3Db().getLastMessages(int.parse(limit));
   return Response.ok(json.encode(r));
 }
 
