@@ -151,6 +151,9 @@ Future<void> orgnizeData() async {
       lastPayment: DateTime.now(),
       currency: currencyV,
       period: [],
+      email: '',
+      password: '',
+      invoices: [],
     );
     await P3Db().addStarAccount(accountData);
   }
