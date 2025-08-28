@@ -26,9 +26,9 @@ Future<void> popServiceLoop({
       'status: messages count=${status?.numberOfMessages}, messages size=${status?.totalSizeInBytes}',
     );
 
-    for (int i = 0; i < 10; i++) {
+    final messageList = await P3Client.list();
+    for (int i = 0; i < messageList.length; i++) {
       print('Trying to get messages');
-      final messageList = await P3Client.list();
       print('Fetched Message Count: ${messageList.length}');
 
       for (var msgRef in messageList.reversed) {
